@@ -8,7 +8,6 @@ export default function StudyCard({ cards }) {
   const history = useHistory();
   const { deckId } = useParams();
 
-  // loop through the cards prop and prompt after last card
   const handleNext = () => {
     if (session.currentCard < cards.length - 1) {
       setSession({

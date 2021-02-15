@@ -1,91 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { createCard, readDeck } from "../../utils/api/index";
+import { useHistory, useParams } from "react-router-dom";
+import { readDeck, createCard } from "../../utils/api/index";
+import BreadCrumbNav from "../Common/BreadCrumbNav";
+import CardForm from "./CardForm";
 
-export default function AddCard() {
-  const initialState = { front: "", back: "" };
-  const [formData, setFormData] = useState(initialState);
-  const [deck, setDeck] = useState({});
-  const { deckId } = useParams();
+function AddCard() {
+    const { deckId, cardId } = useParams();
+    const [deck, setDeck] = useState("");
+    const [front, setFront] = useState("");
+    const [back, setBack] = useState("");
 
-  const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+    const history = useHistory();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    await createCard(deckId, formData);
-    setFormData(initialState);
-  };
-  
-  useEffect(() => {
-    const abortController = new AbortController();
-    const loadDeck = async () => {
-      const loadedDeck = await readDeck(deckId, abortController.signal);
-      setDeck(() => loadedDeck);
-    };
-    loadDeck();
-    return () => abortController.abort();
-  }, [deckId]);
+    const handleAddCard = (e) => {
+        e.preventDefault();
+        const newCard = {
+            "front": front,
+            "back": back,
+            "deckId": deckId,
+            "id": cardId
+        };
+        createCard(deckId, newCard);
 
-  return (
-    <>
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item text-primary">
-            <Link to="/">
-              <i className='bi bi-house-door-fill'></i> Home
-            </Link>
-          </li>
-          <li className="breadcrumb-item text-primary">
-            <Link to={`/decks/${deckId}`}>{deck.name}</Link>
-          </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            Add Card
-          </li>
-        </ol>
-      </nav>
-      <h1>{deck.name}: AddCard</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="front">
-            <h4>Front</h4>
-          </label>
-          <textarea
-            name="front"
-            style={{ resize: "none" }}
-            rows="3"
-            className="form-control"
-            value={formData.front}
-            placeholder="Front side of card"
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="back">
-            <h4>Back</h4>
-          </label>
-          <textarea
-            name="back"
-            style={{ resize: "none" }}
-            rows="3"
-            className="form-control"
-            value={formData.back}
-            placeholder="Back side of card"
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <Link to={`/decks/${deckId}`}>
-            <button className="btn btn-secondary mr-2">Done</button>
-          </Link>
-          <button type="submit" className="btn btn-primary">
-            Save
-          </button>
-        </div>
-      </form>
-    </>
-  );
+        const fetchDeck = async () => setDeck(await readDeck(deckId));
+        fetchDeck();
+        history.push(`/decks/${deckId}`);
+    }
+
+    useEffect(() => {
+        const abortController = new AbortController();
+        const fetchDeck = async () => setDeck(await readDeck(deckId, abortController.signal));
+        fetchDeck();
+        return () => abortController.abort();
+    }, [deckId, history]);
+
+    const handleFrontChange = (e) => setFront(e.target.value);
+    const handleBackChange = (e) => setBack(e.target.value);
+    return (
+        <>
+            <BreadCrumbNav link={`/decks/${deck.id}`} linkName={deck.name} pageName={"Add Card"} />
+            <div className="row d-flex">
+                <h3 className="mr-1">{deck.name}:</h3><h3>Add Card</h3>
+            </div>
+            <CardForm onSubmit={handleAddCard} handleFrontChange={handleFrontChange} handleBackChange={handleBackChange}/>
+        </>
+    );
 }
+
+export default AddCard;

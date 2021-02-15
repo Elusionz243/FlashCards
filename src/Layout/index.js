@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "./Header";
-import NotFound from "./NotFound";
+import Header from "./Common/Header";
+import NotFound from "./Common/NotFound";
 import Home from "./Home/Home";
 import CreateDeck from "./Home/CreateDeck";
 import Study from './Deck/Study';
@@ -16,6 +16,8 @@ function Layout() {
   const updateDecks = (value) => {
     setNumOfDecks(() => numOfDecks + value);
   }
+
+  
 
   return (
     <>
