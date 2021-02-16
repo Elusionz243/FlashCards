@@ -33,7 +33,7 @@ export default function Deck({ updateDecks }) {
     };
     loadDeck();
     return () => abortController.abort();
-  }, [numOfCards, deckId]);
+  }, [deckId]);
 
   if (deck.id) {
     return (

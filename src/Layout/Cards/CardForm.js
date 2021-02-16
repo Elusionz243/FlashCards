@@ -11,7 +11,7 @@ export default function CardForm({ onSubmit, handleFrontChange, handleBackChange
             const fetchCard = async () => setCard(await readCard(cardId));
             fetchCard();
         }
-    }, [cardId, deckId]);
+    }, [cardId]);
 
 
     return (

@@ -15,7 +15,7 @@ function Home({ numOfDecks, updateDecks }) {
     };
     loadDecks();
     return () => abortController.abort();
-  }, [numOfDecks]);
+  }, []);
 
   return (
     <div className="NotFound">
